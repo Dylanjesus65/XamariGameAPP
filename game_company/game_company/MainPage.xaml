@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="game_company.MainPage">
+
+    <StackLayout Spacing="10">
+        <Label Text="Home App Game"
+           FontSize="24"
+           FontAttributes="Bold"
+           HorizontalOptions="CenterAndExpand"
+           VerticalOptions="CenterAndExpand"/>
+
+        <Button Text="Ir a CrudGame"
+            Clicked="OnNavigateToCrudGameClicked"
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="CenterAndExpand"/>
+
+        <Button Text="Ir a CrudCategory"
+            Clicked="OnNavigateToCrudCategoryClicked" 
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="CenterAndExpand"/>
+
+        <Button Text="Ir a CrudDeveloper"
+            Clicked="OnNavigateToCrudDeveloperClicked" 
+                HorizontalOptions="CenterAndExpand"
+                VerticalOptions="CenterAndExpand"/>
+    </StackLayout>
+
+
+
+
+</ContentPage>

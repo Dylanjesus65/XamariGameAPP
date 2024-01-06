@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="game_company.CrudDeveloper">
+    <ContentPage.Content>
+
+        <StackLayout>
+            <Entry x:Name="txtId" Placeholder="ID"  />
+            <Entry x:Name="txtNombre" Placeholder="Nombre producto" />
+            <Entry x:Name="txtCountry" Placeholder="País" />
+            <Entry x:Name="txtUniqueCode" Placeholder="Código único"  />
+            <Button Text="Insertar" Clicked="cmdInsert_Clicked" />
+            <Button Text="Modificar" Clicked="cmdUpdate_Clicked" />
+            <Button Text="Leer" Clicked="cmdReadOne_Clicked" />
+            <Button Text="Eliminar" Clicked="cmdDelete_Clicked" />
+            <Button x:Name="cmdRegresar" Text="REGRESAR" Clicked="cmdRegresar_Clicked" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

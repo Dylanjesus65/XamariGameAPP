@@ -1,0 +1,1 @@
+D:\game_app\game_company\game_company\game_company.UWP\game_company.UWP.csproj;x86

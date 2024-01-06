@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="game_company.CrudGame">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Cambio de pantalla a juego" />
+            <Entry x:Name="txtGameId" Placeholder="ID del juego" />
+            <Entry x:Name="txtCategoryId" Placeholder="ID de la categoría" />
+            <Entry x:Name="txtDevId" Placeholder="ID del desarrollador" />
+            <Entry x:Name="txtGameName" Placeholder="Nombre del juego" />
+            <Entry x:Name="txtGameDateRelease" Placeholder="Fecha de lanzamiento del juego" />
+            <Entry x:Name="txtGameCodeUnique" Placeholder="Código único del juego" />
+            <Entry x:Name="txtGameSize" Placeholder="Tamaño del juego" />
+            <Entry x:Name="txtGamePrice" Placeholder="Precio del juego" />
+
+            <Button Text="Insertar" Clicked="cmdInsert_Clicked" />
+            <Button Text="Modificar" Clicked="cmdUpdate_Clicked" />
+            <Button Text="Leer" Clicked="cmdReadOne_Clicked" />
+            <Button Text="Eliminar" Clicked="cmdDelete_Clicked" />
+
+            <Button x:Name="cmdRegresar" Text="REGRESAR" Clicked="cmdRegresar_Clicked" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
