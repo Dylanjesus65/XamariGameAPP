@@ -2,7 +2,9 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,11 +32,9 @@ namespace game_company
                     return;
                 }
 
-                using (var client = new HttpClient())
+                using (var wc = new WebClient())
                 {
-                    var url = $"{apiUrl}/{txtId.Text}";
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.DefaultRequestHeaders.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    wc.Headers.Add("Content-Type", "application/json");
 
                     var developer = new Developer
                     {
@@ -44,19 +44,26 @@ namespace game_company
                         dev_unique_code = txtUniqueCode.Text
                     };
 
-                    var jsonDeveloper = JsonConvert.SerializeObject(developer);
-                    var content = new StringContent(jsonDeveloper, Encoding.UTF8, "application/json");
+                    var jsonDeveloper = Newtonsoft.Json.JsonConvert.SerializeObject(developer);
 
-                    var resp = await client.PutAsync(url, content);
-
-                    if (resp.IsSuccessStatusCode)
+                    try
                     {
-                        await DisplayAlert("Éxito", "Desarrollador actualizado correctamente", "OK");
-                        LimpiarEntradas();
+                        var respuesta = wc.UploadString($"{apiUrl}", "PUT", jsonDeveloper);
+
+                        if (!string.IsNullOrEmpty(respuesta))
+                        {
+                            await DisplayAlert("Éxito", "Desarrollador actualizado correctamente", "OK");
+                            LimpiarEntradas();
+                        }
+                        else
+                        {
+                            await DisplayAlert("Error", "Error al actualizar el desarrollador", "OK");
+                        }
                     }
-                    else
+                    catch (WebException ex)
                     {
-                        await DisplayAlert("Error", "Error al actualizar el desarrollador", "OK");
+                        var response = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                        await DisplayAlert("Error", $"Error de conexión: {ex.Message}\nRespuesta del servidor: {response}", "OK");
                     }
                 }
             }

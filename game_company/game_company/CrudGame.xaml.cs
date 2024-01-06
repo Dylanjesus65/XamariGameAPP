@@ -2,7 +2,9 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,20 +27,15 @@ namespace game_company
         {
             try
             {
-                if (string.IsNullOrEmpty(txtGameId.Text) || string.IsNullOrEmpty(txtCategoryId.Text) ||
-                    string.IsNullOrEmpty(txtDevId.Text) || string.IsNullOrEmpty(txtGameName.Text) ||
-                    string.IsNullOrEmpty(txtGameDateRelease.Text) || string.IsNullOrEmpty(txtGameCodeUnique.Text) ||
-                    string.IsNullOrEmpty(txtGameSize.Text) || string.IsNullOrEmpty(txtGamePrice.Text))
+                if (string.IsNullOrEmpty(txtGameId.Text) || string.IsNullOrEmpty(txtGameName.Text) || string.IsNullOrEmpty(txtCategoryId.Text) || string.IsNullOrEmpty(txtDevId.Text))
                 {
-                    await DisplayAlert("Error", "Todos los campos son obligatorios", "OK");
+                    await DisplayAlert("Error", "ID del juego, Nombre del juego, ID de la categoría y ID del desarrollador son campos obligatorios", "OK");
                     return;
                 }
 
-                using (var client = new HttpClient())
+                using (var wc = new WebClient())
                 {
-                    var url = $"{apiUrl}/{txtGameId.Text}";
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.DefaultRequestHeaders.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    wc.Headers.Add("Content-Type", "application/json");
 
                     var game = new Game
                     {
@@ -46,25 +43,32 @@ namespace game_company
                         cat_id = int.Parse(txtCategoryId.Text),
                         dev_id = int.Parse(txtDevId.Text),
                         game_name = txtGameName.Text,
-                        game_date_release = DateTime.Parse(txtGameDateRelease.Text),
+                        game_date_release = DateTime.Parse(txtGameDateRelease.Text), // Asegúrate de tener el formato correcto
                         game_code_unique = txtGameCodeUnique.Text,
-                        game_size = double.Parse(txtGameSize.Text),
-                        game_price = double.Parse(txtGamePrice.Text)
+                        game_size = double.Parse(txtGameSize.Text), // Puedes cambiar esto según tus necesidades
+                        game_price = double.Parse(txtGamePrice.Text) // Puedes cambiar esto según tus necesidades
                     };
 
-                    var jsonGame = JsonConvert.SerializeObject(game);
-                    var content = new StringContent(jsonGame, Encoding.UTF8, "application/json");
+                    var jsonGame = Newtonsoft.Json.JsonConvert.SerializeObject(game);
 
-                    var resp = await client.PutAsync(url, content);
-
-                    if (resp.IsSuccessStatusCode)
+                    try
                     {
-                        await DisplayAlert("Éxito", "Juego actualizado correctamente", "OK");
-                        LimpiarEntradas();
+                        var respuesta = wc.UploadString($"{apiUrl}", "PUT", jsonGame);
+
+                        if (!string.IsNullOrEmpty(respuesta))
+                        {
+                            await DisplayAlert("Éxito", "Juego actualizado correctamente", "OK");
+                            LimpiarEntradas();
+                        }
+                        else
+                        {
+                            await DisplayAlert("Error", "Error al actualizar el juego", "OK");
+                        }
                     }
-                    else
+                    catch (WebException ex)
                     {
-                        await DisplayAlert("Error", "Error al actualizar el juego", "OK");
+                        var response = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                        await DisplayAlert("Error", $"Error de conexión: {ex.Message}\nRespuesta del servidor: {response}", "OK");
                     }
                 }
             }
@@ -73,6 +77,7 @@ namespace game_company
                 await DisplayAlert("Error", $"Error: {ex.Message}", "OK");
             }
         }
+
 
         private void cmdDelete_Clicked(object sender, EventArgs e)
         {

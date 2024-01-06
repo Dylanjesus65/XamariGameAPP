@@ -2,7 +2,9 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,11 +33,9 @@ namespace game_company
                     return;
                 }
 
-                using (var client = new HttpClient())
+                using (var wc = new WebClient())
                 {
-                    var url = $"{apiUrl}/{txtId.Text}";
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.DefaultRequestHeaders.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("application/json"));
+                    wc.Headers.Add("Content-Type", "application/json");
 
                     var categoria = new Category
                     {
@@ -43,19 +43,26 @@ namespace game_company
                         cat_name = txtNombre.Text
                     };
 
-                    var jsonCategoria = JsonConvert.SerializeObject(categoria);
-                    var content = new StringContent(jsonCategoria, Encoding.UTF8, "application/json");
+                    var jsonCategoria = Newtonsoft.Json.JsonConvert.SerializeObject(categoria);
 
-                    var resp = await client.PutAsync(url, content);
-
-                    if (resp.IsSuccessStatusCode)
+                    try
                     {
-                        await DisplayAlert("Éxito", "Categoría actualizada correctamente", "OK");
-                        LimpiarEntradas();
+                        var respuesta = wc.UploadString($"{apiUrl}", "PUT", jsonCategoria);
+
+                        if (!string.IsNullOrEmpty(respuesta))
+                        {
+                            await DisplayAlert("Éxito", "Categoría actualizada correctamente", "OK");
+                            LimpiarEntradas();
+                        }
+                        else
+                        {
+                            await DisplayAlert("Error", "Error al actualizar la categoría", "OK");
+                        }
                     }
-                    else
+                    catch (WebException ex)
                     {
-                        await DisplayAlert("Error", "Error al actualizar la categoría", "OK");
+                        var response = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
+                        await DisplayAlert("Error", $"Error de conexión: {ex.Message}\nRespuesta del servidor: {response}", "OK");
                     }
                 }
             }
@@ -64,6 +71,11 @@ namespace game_company
                 await DisplayAlert("Error", $"Error: {ex.Message}", "OK");
             }
         }
+
+
+
+
+
 
 
 
